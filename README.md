@@ -86,7 +86,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
     - Pandudewanata
 - Switch 1
     - Nakula
-        ```http
+        ```
         auto eth0
             iface eth0 inet static
             address 10.23.1.2
@@ -94,7 +94,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
             gateway 10.23.1.1
         ```
     - Sadewa
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.1.3
@@ -102,7 +102,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
             gateway 10.23.1.1
         ```
     - Yudhistira
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.1.4
@@ -111,7 +111,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
             up echo nameserver 192.168.122.1 > /etc/resolv.conf
         ```
     - Werkudara
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.1.5
@@ -121,7 +121,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
         ```
 - Switch 2
     - Arjuna
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.2.2
@@ -131,7 +131,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
         ```
 - Switch 3
     - Prabukusuma
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.3.4
@@ -140,7 +140,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
             up echo nameserver 192.168.122.1 > /etc/resolv.conf
         ```
     - Abimanyu
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.3.3
@@ -149,7 +149,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
             up echo nameserver 192.168.122.1 > /etc/resolv.conf
         ```
     - Wisanggeni
-        ```http
+        ```
         auto eth0
         iface eth0 inet static
             address 10.23.3.2
@@ -159,16 +159,16 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
         ```
 ### Prerequisite
 - Router (Pandudewanata)
-    ```http
+    ```
         iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.23.0.0/16
     ```
 - DNS Master & Slave (Yudhistira & Werkudara)
-    ```http
+    ```
         apt-get update
         apt-get install bind9 -y    
     ```
 - Client (Nakula & Sadewa)
-    ```http
+    ```
         echo nameserver 192.168.122.1 > /etc/resolv.conf
 
         apt-get update -y
@@ -180,12 +180,12 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
     ```
 
 - NGINX Config
-    ```http
+    ```
         apt install nginx php php-fpm -y        
     ```
 
 - Webserver Apache2
-    ```http
+    ```
     apt-get update
     apt-get install nginx -y
     apt-get install apache2 -y
@@ -202,7 +202,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
     ```
 
 - Zip Download & Unzip Web Server Resources
-    ```http
+    ```
         wget -O '/var/www/abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc'
         unzip -o /var/www/abimanyu.d03.com -d /var/www/ 
         mv /var/www/abimanyu.yyy.com /var/www/abimanyu.d03
