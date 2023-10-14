@@ -676,9 +676,230 @@ Setelah berhasil menambahkannya dan melakukan restart bind9, untuk melakukan pen
 
 > Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 
+Untuk melakukan konfigurasi load balancing, langkah-langkah berikut perlu diperhatikan:
+
+1. Pastikan telah melakukan konfigurasi Arjuna dengan benar, termasuk konfigurasi Nginx dan menentukan aturan load balancing yang sesuai, misalnya round-robin atau algoritma lainnya.
+
+2. Selanjutnya, lakukan proses deployment pada masing-masing worker. Ini melibatkan mengunggah aplikasi atau layanan web yang ingin di-load balance ke setiap worker. Pastikan bahwa semua worker telah diatur dengan benar dan siap melayani lalu lintas web.
+
+3. Setelah semua konfigurasi dan deployment selesai, Arjuna akan bertindak sebagai load balancer yang akan mendistribusikan lalu lintas web ke worker yang tersedia.
+
 ### Script
 
+Jangan lupa untuk menghindari tabrakan port dengan konfigurasi default yang ada saat menginstal Nginx, langkah yang perlu diambil adalah menghapus file konfigurasi default tersebut.
+
+**Arjuna (Load Balancer)**
+
+Membuat load balancing
+
+```shell
+echo '
+upstream worker {
+        server 10.23.3.2;
+        server 10.23.3.3;
+        server 10.23.3.4;
+}
+
+server {
+    listen 80;
+
+    server_name arjuna.d03.com www.arjuna.d03.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+}' > /etc/nginx/sites-available/arjuna.d03.com
+
+ln -s /etc/nginx/sites-available/arjuna.d03.com /etc/nginx/sites-enabled
+
+service nginx restart
+```
+
+**Prabakusuma (Worker)**
+
+```shell
+apt-get update
+apt-get install nginx -y
+apt-get install unzip -y
+apt-get install php php-fpm -y
+apt-get install dnsutils -y
+
+rm /etc/nginx/sites-enabled/*
+rm /etc/nginx/sites-available/*
+
+service php7.2-fpm start
+
+echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prabukusuma</title>
+</head>
+<body>
+    Im prabukusuma
+</body>
+</html>
+' > /var/www/html/index.html
+
+echo '
+server {
+    listen 80;
+    root /var/www/html/;
+    index index.html index.htm;
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    error_log /var/log/nginx/prabukusuma_error.log;
+    access_log /var/log/nginx/prabukusuma_access.log;
+}
+ ' > /etc/nginx/sites-available/prabukusuma.d03.com
+
+ ln -s /etc/nginx/sites-available/prabukusuma.d03.com /etc/nginx/sites-enabled/
+
+ service nginx restart
+```
+
+**Abimanyu (Worker)**
+
+```shell
+
+apt-get update
+apt-get install nginx -y
+apt-get install apache2 -y
+apt-get install php php-fpm -y
+apt-get install libapache2-mod-php7.0 -y
+apt-get install unzip -y
+apt-get install wget -y
+apt-get install dnsutils -y
+
+rm /etc/nginx/sites-enabled/*
+rm /etc/nginx/sites-available/*
+rm /etc/apache2/sites-enabled/*
+rm /etc/apache2/sites-available/*
+
+service php7.2-fpm start
+
+a2enmod rewrite
+echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>abimanyu</title>
+</head>
+<body>
+    Im abimanyu
+</body>
+</html>
+' > /var/www/html/index.html
+
+echo '
+server {
+    listen 80;
+    root /var/www/html/;
+    index index.html index.htm;
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    error_log /var/log/nginx/abimanyu_error.log;
+    access_log /var/log/nginx/abimanyu_access.log;
+}
+ ' > /etc/nginx/sites-available/abimanyu.d03.com
+
+ln -s /etc/nginx/sites-available/abimanyu.d03.com /etc/nginx/sites-enabled
+
+service nginx restart
+
+```
+
+**Wisanggeni (Worker)**
+
+```shell
+apt-get update
+apt-get install nginx -y
+apt-get install unzip -y
+apt-get install php php-fpm -y
+apt-get install dnsutils -y
+
+rm /etc/nginx/sites-enabled/*
+rm /etc/nginx/sites-available/*
+
+service php7.2-fpm start
+
+echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wisanggeni</title>
+</head>
+<body>
+    Im wisanggeni
+</body>
+</html>
+' > /var/www/html/index.html
+
+echo '
+server {
+    listen 80;
+    root /var/www/html/;
+    index index.html index.htm;  # Remove index.php from here
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;  # Adjust the try_files directive as needed
+    }
+
+    error_log /var/log/nginx/wisanggeni_error.log;
+    access_log /var/log/nginx/wisanggeni_access.log;
+}
+ ' > /etc/nginx/sites-available/wisanggeni.d03.com
+
+ ln -s /etc/nginx/sites-available/wisanggeni.d03.com /etc/nginx/sites-enabled
+ 
+ service nginx restart
+```
+
 ### Result
+
+Lakukan tes pada client Nakula dan Sadewa.
+```shell
+lynx http://10.23.3.2
+lynx http://10.23.3.3
+lynx http://10.23.3.4
+lynx http://abimanyu.d03.com
+```
+**Nakula**
+
+Tampilan Prabakusuma
+![Alt text](img/image-19.png)
+
+Tampilan Abimanyu
+![Alt text](img/image-20.png)
+
+Tampilan Wisanggeni
+![Alt text](img/image-21.png)
+
+**Sadewa**
+
+Tampilan Prabakusuma
+![Alt text](img/image-19.png)
+
+Tampilan Abimanyu
+![Alt text](img/image-20.png)
+
+Tampilan Wisanggeni
+![Alt text](img/image-21.png)
 
 ## Soal-10
 
