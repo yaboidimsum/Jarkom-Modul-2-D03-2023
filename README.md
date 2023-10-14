@@ -5,10 +5,10 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
 
 
 
-| Nama                      | NRP        |
-|---------------------------|------------|
-|Alfan Lukeyan Rizki        | 5025211046 |
-|Dimas Prihady Setyawan     | 5025211184 |
+| Nama                      | NRP        |  Github  | 
+|---------------------------|------------|  ------  |
+|Alfan Lukeyan Rizki        | 5025211046 |  https://github.com/AlfanLukeyan
+|Dimas Prihady Setyawan     | 5025211184 |  https://github.com/yaboidimsum
 
 ## Daftar Isi
 - [Official Report](#laporan-resmi)
@@ -79,7 +79,7 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
 
 
 ### Topology
-![Alt text](image.png)
+![Alt text](img/image.png)
 
 ### Config
 - Router
@@ -233,8 +233,8 @@ Sebelum memulai pengerjaan, langkah awal yang perlu dilakukan adalah melakukan s
     ping google.com -c 5
 ```
 ### Result
-![Alt text](image-1.png)
-![Alt text](image-2.png)
+![Alt text](img/image-1.png)
+![Alt text](img/image-2.png)
 
 ## Soal-2
 >Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
@@ -282,11 +282,11 @@ ping www.arjuna.d03.com
 ### Result
 **Nakula**
 
-![Alt text](image-4.png)
+![Alt text](img/image-4.png)
 
 **Sadewa**
 
-![Alt text](image-3.png)
+![Alt text](img/image-3.png)
 
 ## Soal-3
 >Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
@@ -322,11 +322,11 @@ service bind9 restart
 
 **Nakula**
 
-![Alt text](image-5.png)
+![Alt text](img/image-5.png)
 
 **Sadewa**
 
-![Alt text](image-6.png)
+![Alt text](img/image-6.png)
 
 ## Soal-4
 >Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
@@ -369,11 +369,11 @@ Lalu lakuan ping pada client untuk memastikan subdomain telah berjalan dengan ba
 
 **Nakula**
 
-![Alt text](image-7.png)
+![Alt text](img/image-7.png)
 
 **Sadewa**
 
-![Alt text](image-8.png)
+![Alt text](img/image-8.png)
 
 ## Soal-5
 >Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
@@ -416,11 +416,11 @@ host -t PTR 10.23.3.3
 
 **Nakula**
 
-![Alt text](image-9.png)
+![Alt text](img/image-9.png)
 
 **Sadewa**
 
-![Alt text](image-10.png)
+![Alt text](img/image-10.png)
 
 ## Soal-6
 >Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
@@ -485,19 +485,19 @@ ping abimanyu.d03.com -c 5
 
 Stop Bind9 **Yudhistira**
 
-![Alt text](image-13.png)
+![Alt text](img/image-13.png)
 
 Start Bind9 **Werkudara**
 
-![Alt text](image-14.png)
+![Alt text](img/image-14.png)
 
 **Nakula**
 
-![Alt text](image-11.png)
+![Alt text](img/image-11.png)
 
 **Sadewa**
 
-![Alt text](image-12.png)
+![Alt text](img/image-12.png)
 
 
 ## Soal-7
