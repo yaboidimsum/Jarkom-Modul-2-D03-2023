@@ -1,16 +1,14 @@
-
 # Praktikum Modul 2 Jaringan Komputer
 
-Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota sebagai berikut:
+Perkenalkan kami dari kelas `Jaringan Komputer D Kelompok D03`, dengan anggota sebagai berikut:
 
-
-
-| Nama                      | NRP        |  Github  | 
-|---------------------------|------------|  ------  |
-|Alfan Lukeyan Rizki        | 5025211046 |  https://github.com/AlfanLukeyan
-|Dimas Prihady Setyawan     | 5025211184 |  https://github.com/yaboidimsum
+| Nama                   | NRP        |
+| ---------------------- | ---------- |
+| Alfan Lukeyan Rizki    | 5025211046 |
+| Dimas Prihady Setyawan | 5025211184 |
 
 ## Daftar Isi
+
 - [Official Report](#laporan-resmi)
   - [Menu](#daftar-isi)
   - [Topology](#topology)
@@ -77,167 +75,179 @@ Perkenalkan kami dari kelas ``Jaringan Komputer D Kelompok D03``, dengan anggota
   - [Script Solution](#script-19)
   - [Test Result](#result-19)
 
-
 ### Topology
-![Alt text](img/image.png)
+
+![Alt text](image.png)
 
 ### Config
+
 - Router
-    - Pandudewanata
+  - Pandudewanata
 - Switch 1
-    - Nakula
-        ```
-        auto eth0
-            iface eth0 inet static
-            address 10.23.1.2
-            netmask 255.255.255.0
-            gateway 10.23.1.1
-        ```
-    - Sadewa
-        ```
-        auto eth0
+  - Nakula
+    ```
+    auto eth0
         iface eth0 inet static
-            address 10.23.1.3
-            netmask 255.255.255.0
-            gateway 10.23.1.1
-        ```
-    - Yudhistira
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.1.4
-            netmask 255.255.255.0
-            gateway 10.23.1.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
-    - Werkudara
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.1.5
-            netmask 255.255.255.0
-            gateway 10.23.1.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
+        address 10.23.1.2
+        netmask 255.255.255.0
+        gateway 10.23.1.1
+    ```
+  - Sadewa
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.1.3
+        netmask 255.255.255.0
+        gateway 10.23.1.1
+    ```
+  - Yudhistira
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.1.4
+        netmask 255.255.255.0
+        gateway 10.23.1.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
+  - Werkudara
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.1.5
+        netmask 255.255.255.0
+        gateway 10.23.1.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
 - Switch 2
-    - Arjuna
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.2.2
-            netmask 255.255.255.0
-            gateway 10.23.2.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
+  - Arjuna
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.2.2
+        netmask 255.255.255.0
+        gateway 10.23.2.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
 - Switch 3
-    - Prabukusuma
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.3.4
-            netmask 255.255.255.0
-            gateway 10.23.3.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
-    - Abimanyu
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.3.3
-            netmask 255.255.255.0
-            gateway 10.23.3.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
-    - Wisanggeni
-        ```
-        auto eth0
-        iface eth0 inet static
-            address 10.23.3.2
-            netmask 255.255.255.0
-            gateway 10.23.3.1
-            up echo nameserver 192.168.122.1 > /etc/resolv.conf
-        ```
+  - Prabukusuma
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.3.4
+        netmask 255.255.255.0
+        gateway 10.23.3.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
+  - Abimanyu
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.3.3
+        netmask 255.255.255.0
+        gateway 10.23.3.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
+  - Wisanggeni
+    ```
+    auto eth0
+    iface eth0 inet static
+        address 10.23.3.2
+        netmask 255.255.255.0
+        gateway 10.23.3.1
+        up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    ```
+
 ### Prerequisite
+
 - Router (Pandudewanata)
-    ```
-        iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.23.0.0/16
-    ```
+  ```
+      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.23.0.0/16
+  ```
 - DNS Master & Slave (Yudhistira & Werkudara)
-    ```
-        apt-get update
-        apt-get install bind9 -y    
-    ```
+  ```
+      apt-get update
+      apt-get install bind9 -y
+  ```
 - Client (Nakula & Sadewa)
-    ```
-        echo nameserver 192.168.122.1 > /etc/resolv.conf
 
-        apt-get update -y
-        apt-get install dnsutils -y
-        apt-get install lynx -y
+  ```
+      echo nameserver 192.168.122.1 > /etc/resolv.conf
 
-        echo nameserver 10.23.1.4 > /etc/resolv.conf
-        echo nameserver 10.23.1.5 >> /etc/resolv.conf 
-    ```
+      apt-get update -y
+      apt-get install dnsutils -y
+      apt-get install lynx -y
+
+      echo nameserver 10.23.1.4 > /etc/resolv.conf
+      echo nameserver 10.23.1.5 >> /etc/resolv.conf
+  ```
 
 - NGINX Config
-    ```
-        apt install nginx php php-fpm -y        
-    ```
+
+  ```
+      apt install nginx php php-fpm -y
+  ```
 
 - Webserver Apache2
-    ```
-    apt-get update
-    apt-get install nginx -y
-    apt-get install apache2 -y
-    apt-get install php php-fpm -y
-    apt-get install libapache2-mod-php7.0 -y
-    apt-get install unzip -y
-    apt-get install wget -y
-    apt-get install dnsutils -y
 
-    rm /etc/nginx/sites-enabled/*
-    rm /etc/nginx/sites-available/*
-    rm /etc/apache2/sites-enabled/*
-    rm /etc/apache2/sites-available/*
-    ```
+  ```
+  apt-get update
+  apt-get install nginx -y
+  apt-get install apache2 -y
+  apt-get install php php-fpm -y
+  apt-get install libapache2-mod-php7.0 -y
+  apt-get install unzip -y
+  apt-get install wget -y
+  apt-get install dnsutils -y
+
+  rm /etc/nginx/sites-enabled/*
+  rm /etc/nginx/sites-available/*
+  rm /etc/apache2/sites-enabled/*
+  rm /etc/apache2/sites-available/*
+  ```
 
 - Zip Download & Unzip Web Server Resources
-    ```
-        wget -O '/var/www/abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc'
-        unzip -o /var/www/abimanyu.d03.com -d /var/www/ 
-        mv /var/www/abimanyu.yyy.com /var/www/abimanyu.d03
-        rm /var/www/abimanyu.d03.com
-        rm -rf /var/www/abimanyu.yyy.com
 
-        wget -O '/var/www/parikesit.abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1LdbYntiYVF_NVNgJis1GLCLPEGyIOreS'
-        unzip -o /var/www/parikesit.abimanyu.d03.com -d /var/www/
-        mv /var/www/parikesit.abimanyu.yyy.com /var/www/parikesit.abimanyu.d03
-        rm /var/www/parikesit.abimanyu.d03.com
-        rm -rf /var/www/parikesit.abimanyu.yyy.com
-        mkdir /var/www/parikesit.abimanyu.d03/secret
+  ```
+      wget -O '/var/www/abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc'
+      unzip -o /var/www/abimanyu.d03.com -d /var/www/
+      mv /var/www/abimanyu.yyy.com /var/www/abimanyu.d03
+      rm /var/www/abimanyu.d03.com
+      rm -rf /var/www/abimanyu.yyy.com
 
-        wget -O '/var/www/rjp.baratayuda.abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1pPSP7yIR05JhSFG67RVzgkb-VcW9vQO6'
-        unzip -o /var/www/rjp.baratayuda.abimanyu.d03.com -d /var/www/
-        mv /var/www/rjp.baratayuda.abimanyu.yyy.com /var/www/rjp.baratayuda.abimanyu.d03
-        rm /var/www/rjp.baratayuda.abimanyu.d03.com
-        rm -rf /var/www/rjp.baratayuda.abimanyu.yyy.com
-    ```
+      wget -O '/var/www/parikesit.abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1LdbYntiYVF_NVNgJis1GLCLPEGyIOreS'
+      unzip -o /var/www/parikesit.abimanyu.d03.com -d /var/www/
+      mv /var/www/parikesit.abimanyu.yyy.com /var/www/parikesit.abimanyu.d03
+      rm /var/www/parikesit.abimanyu.d03.com
+      rm -rf /var/www/parikesit.abimanyu.yyy.com
+      mkdir /var/www/parikesit.abimanyu.d03/secret
+
+      wget -O '/var/www/rjp.baratayuda.abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1pPSP7yIR05JhSFG67RVzgkb-VcW9vQO6'
+      unzip -o /var/www/rjp.baratayuda.abimanyu.d03.com -d /var/www/
+      mv /var/www/rjp.baratayuda.abimanyu.yyy.com /var/www/rjp.baratayuda.abimanyu.d03
+      rm /var/www/rjp.baratayuda.abimanyu.d03.com
+      rm -rf /var/www/rjp.baratayuda.abimanyu.yyy.com
+  ```
 
 ## Soal-1
-> Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjuna merupakan Load Balancer yang terdiri dari beberapa Web Server yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Buatlah topologi dengan pembagian sebagai berikut. Folder topologi dapat diakses pada drive berikut 
+
+> Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjuna merupakan Load Balancer yang terdiri dari beberapa Web Server yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Buatlah topologi dengan pembagian sebagai berikut. Folder topologi dapat diakses pada drive berikut
 
 Sebelum memulai pengerjaan, langkah awal yang perlu dilakukan adalah melakukan setup. Tahap selanjutnya adalah melakukan pengujian terhadap semua node yang ada. Pada tahap ini, pengujian dilakukan pada kedua client, yakni Nakula dan Sadewa.
 
 ### Script
+
 ```
     ping google.com -c 5
 ```
+
 ### Result
+
 ![Alt text](img/image-1.png)
 ![Alt text](img/image-2.png)
 
 ## Soal-2
->Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
+
+> Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
 
 Dilakukan tahap awal setup pada Node Yudhistira (DNS Master) sebelum melanjutkan ke proses pembuatan domain yang tercantum dalam script berikut.
 
@@ -270,16 +280,21 @@ www     IN      CNAME   arjuna.d03.com.' > /etc/bind/jarkom/arjuna.d03.com
 service bind9 restart
 ```
 
-Pastikan nameserver client pada ``/etc/resov.conf`` telah mengarah ke `IP Node Yudhistira`
+Pastikan nameserver client pada `/etc/resov.conf` telah mengarah ke `IP Node Yudhistira`
+
 ```
 nameserver 10.23.1.4
 ```
+
 Lakukan Ping pada client untuk memastikan domain telah berjalan dengan baik.
+
 ```
 ping arjuna.d03.com
 ping www.arjuna.d03.com
 ```
+
 ### Result
+
 **Nakula**
 
 ![Alt text](img/image-4.png)
@@ -289,11 +304,13 @@ ping www.arjuna.d03.com
 ![Alt text](img/image-3.png)
 
 ## Soal-3
->Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
+
+> Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
 
 Langkah-langkah implementasi tetap sama seperti yang telah dijelaskan pada Pertanyaan 2, dengan satu-satunya perbedaan terletak pada nama domain yang digunakan.
 
 ### Script
+
 ```
 echo 'zone "abimanyu.d03.com" {
         type master;
@@ -318,6 +335,7 @@ www     IN      CNAME   abimanyu.d03.com.' > /etc/bind/jarkom/abimanyu.d03.com
 
 service bind9 restart
 ```
+
 ### Result
 
 **Nakula**
@@ -329,11 +347,13 @@ service bind9 restart
 ![Alt text](img/image-6.png)
 
 ## Soal-4
->Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
+
+> Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
 
 Untuk membuat subdomain pada domain abimanyu.yyy.com, diperlukan penambahan baris baru dengan nama 'parikesit' pada file abimanyu.d03.com dengan tipe A.
 
 ### Script
+
 ```
 echo 'zone "abimanyu.d03.com" {
         type master;
@@ -362,8 +382,8 @@ parikesit       IN      A       10.23.3.3      ; IP Abimanyu
 
 service bind9 restart
 ```
-Lalu lakuan ping pada client untuk memastikan subdomain telah berjalan dengan baik.
 
+Lalu lakuan ping pada client untuk memastikan subdomain telah berjalan dengan baik.
 
 ### Result
 
@@ -376,11 +396,13 @@ Lalu lakuan ping pada client untuk memastikan subdomain telah berjalan dengan ba
 ![Alt text](img/image-8.png)
 
 ## Soal-5
->Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
+
+> Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
 Untuk melakukan konfigurasi reverse domain, kami perlu mengetahui IP dari Abimanyu. IP Abimanyu dalam kelompok kami adalah 10.23.3.3, oleh karena itu, kami perlu mengubahnya menjadi 3.3.23.10.
 
 ### Script
+
 ```
 echo 'zone "3.23.10.in-addr.arpa" {
         type master;
@@ -396,7 +418,7 @@ $TTL  604800
 @   IN      SOA     abimanyu.d03.com.  root.abimanyu.d03.com. (
                     2023100902      ; Serial
                         604800      ; Refresh
-                        86400       ; Retry 
+                        86400       ; Retry
                         2419200     ; Expire
                         604800  )   ; Negative Cache TTL
 ;
@@ -411,7 +433,6 @@ Lakukan command berikut pada client untuk memastikan reverse domain telah berjal
 host -t PTR 10.23.3.3
 ```
 
-
 ### Result
 
 **Nakula**
@@ -423,7 +444,8 @@ host -t PTR 10.23.3.3
 ![Alt text](img/image-10.png)
 
 ## Soal-6
->Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
+
+> Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
 
 Untuk melakukan konfigurasi DNS Slave, diperlukan beberapa pengaturan pada `DNS Master(Yudhistira)` dan `DNS Slave (Werkudara)`.
 
@@ -432,6 +454,7 @@ Untuk melakukan konfigurasi DNS Slave, diperlukan beberapa pengaturan pada `DNS 
 Langkah awal adalah menambahkan konfigurasi 'notify', 'also-notify', dan 'allow-transfer' agar memberikan izin kepada IP yang dituju.
 
 **DNS Master (Yudhistira)**
+
 ```
 echo 'zone "arjuna.d03.com" {
         type master;
@@ -456,9 +479,11 @@ zone "3.23.10.in-addr.arpa" {
 service bind9 restart
 service bind9 stop
 ```
+
 Service pada DNS Master dihentikan untuk memastikan konfigurasi telah berjalan dengan baik pada DNS Slave.
 
 **DNS Slave (Werkudara)**
+
 ```
 echo 'zone "abimanyu.d03.com" {
     type slave;
@@ -474,6 +499,7 @@ zone "arjuna.d03.com" {
 
 service bind9 restart
 ```
+
 Jika sudah selesai, pengujian dapat dilakukan dengan melakukan ping pada domain yang telah dibuat, seperti Arjuna dan Abimanyu
 
 ```
@@ -499,113 +525,244 @@ Start Bind9 **Werkudara**
 
 ![Alt text](img/image-12.png)
 
-
 ## Soal-7
->Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
+
+> Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
+
+Dalam proses pembuatan delegasi subdomain, diperlukan beberapa konfigurasi pada DNS Master dan DNS Slave. Selain itu, kita memerlukan bantuan konfigurasi 'allow-query { any; };' pada DNS Master dan Slave. Selain itu, NS (Name Server) juga diperlukan karena NS digunakan untuk delegasi zona DNS sehingga dapat menggunakan authoritative name server yang telah ditentukan.
 
 ### Script
 
+Perlu menambahkan entri 'ns1 IN A 10.23.1.5' pada file konfigurasi DNS Master agar Werkudara memiliki authoritative terhadapnya. Selain itu, diperlukan aktivasi 'allow-query { any; };' pada konfigurasi DNS Master. Terakhir, perlu mengedit file '/etc/bind/named.conf.local' sesuai kebutuhan
+
+**DNS Master (Yudhistira)**
+
+```
+echo '
+;
+; BIND data file for local loopback interface
+;
+$TTL  604800
+@   IN      SOA     abimanyu.d03.com.  root.abimanyu.d03.com. (
+                    2023100902      ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry
+                        2419200     ; Expire
+                        604800  )   ; Negative Cache TTL
+;
+@               IN      NS      abimanyu.d03.com.
+@               IN      A       10.23.3.3       ; IP Abimanyu
+www             IN      CNAME   abimanyu.d03.com.
+www.parikesit   IN      CNAME   parikesit.abimanyu.d03.com.
+parikesit       IN      A       10.23.3.3      ; IP Abimanyu
+ns1             IN      A       10.23.1.5      ; IP werkudara
+baratayuda              NS      ns1
+@               IN      AAAA    ::1
+' > /etc/bind/main/abimanyu.d03.com
+
+echo 'options{
+        directory "/var/cache/bind";
+
+        // dnssec-validation auto;
+        allow-query{ any; };
+        auth-nxdomain no;
+        listen-on-v6{ any; };
+};' > /etc/bind/named.conf.options
+
+service bind9 restart
+```
+
+Selain itu, perlu juga melakukan konfigurasi pada Node Werkudara untuk mengarahkan zona ke DNS Master sehingga authoritative-nya dapat berfungsi. Pada DNS Slave, diperlukan aktivasi 'allow-query { any; };' sesuai kebutuhan.
+
+**DNS Slave (Werkudara)**
+
+```
+echo 'zone "baratayuda.abimanyu.d03.com"{
+    type master;
+    file "/etc/bind/baratayuda/baratayuda.abimanyu.d03.com";
+};
+' > /etc/bind/named.conf.local
+
+mkdir /etc/bind/baratayuda
+
+echo '
+;
+; BIND data file for local loopback interface
+;
+$TTL  604800
+@   IN      SOA     baratayuda.abimanyu.d03.com.  root.baratayuda.abimanyu.d03.com. (
+                    2023100601      ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry
+                        2419200     ; Expire
+                        604800  )   ; Negative Cache TTL
+;
+@   IN      NS      baratayuda.abimanyu.d03.com.
+@   IN      A       10.23.3.3       ;
+www IN      CNAME   baratayuda.abimanyu.d03.com.
+' > /etc/bind/baratayuda/baratayuda.abimanyu.d03.com
+
+echo 'options{
+        directory "/var/cache/bind";
+
+        // dnssec-validation auto;
+        allow-query{any;};
+        auth-nxdomain no;
+        listen-on-v6{ any; };
+};' > /etc/bind/named.conf.options
+```
+
 ### Result
 
+**Nakula**
+
+![Alt text](img/image-15.png)
+
+**Sadewa**
+
+![Alt text](img/image-16.png)
 
 ## Soal-8
->Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
+
+> Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
+
+Karena sebelumnya telah dilakukan delegasi pada DNS Slave, dan sekarang perlu menambahkan subdomain untuk delegasi domain tersebut, maka diperlukan penambahan konfigurasi pada DNS Slave seperti yang berikut
 
 ### Script
 
+```
+rjp             IN      A       10.23.3.3     ; IP Abimanyu
+www.rjp         IN      CNAME   rjp.baratayuda.abimanyu.d03.com.
+```
+
+**DNS Slave (Werkudara)**
+
+```
+echo '
+;
+; BIND data file for local loopback interface
+;
+$TTL  604800
+@   IN      SOA     baratayuda.abimanyu.d03.com.  root.baratayuda.abimanyu.d03.com. (
+                    2023100601      ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry
+                        2419200     ; Expire
+                        604800  )   ; Negative Cache TTL
+;
+@   IN      NS      baratayuda.abimanyu.d03.com.
+@   IN      A       10.23.3.3       ;
+www IN      CNAME   baratayuda.abimanyu.d03.com.
+rjp IN      A       10.23.3.3       ;
+www.rjp     IN      CNAME   rjp.baratayuda.abimanyu.d03.com.
+' > /etc/bind/baratayuda/baratayuda.abimanyu.d03.com
+
+service bind9 restart
+```
+
 ### Result
 
+Setelah berhasil menambahkannya dan melakukan restart bind9, untuk melakukan pengujian, Anda dapat cukup melakukan ping pada rjp.baratayuda.abimanyu.d03.com atau www.rjp.baratayuda.abimanyu.d03.com."
+
+**Nakuula**
+
+![Alt text](img/image-17.png)
+
+**Sadewa**
+
+![Alt text](img/image-18.png)
 
 ## Soal-9
->Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
+
+> Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 
 ### Script
 
 ### Result
-
 
 ## Soal-10
->Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh (Prabakusuma:8001, Abimanyu:8002, Wisanggeni:8003)
+
+> Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh (Prabakusuma:8001, Abimanyu:8002, Wisanggeni:8003)
 
 ### Script
 
 ### Result
-
 
 ## Soal-11
->Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
+
+> Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
 ### Script
 
 ### Result
-
 
 ## Soal-12
->Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
+
+> Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
 ### Script
 
 ### Result
-
 
 ## Soal-13
->Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+
+> Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
 
 ### Script
 
 ### Result
-
 
 ## Soal-14
->Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
+
+> Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
 ### Script
 
 ### Result
-
 
 ## Soal-15
->Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
+
+> Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
 ### Script
 
 ### Result
-
 
 ## Soal-16
->Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi www.parikesit.abimanyu.yyy.com/js 
+
+> Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi www.parikesit.abimanyu.yyy.com/js
 
 ### Script
 
 ### Result
-
 
 ## Soal-17
->Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
+
+> Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
 ### Script
 
 ### Result
-
 
 ## Soal-18
->Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
+
+> Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
 ### Script
 
 ### Result
-
 
 ## Soal-19
->Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
+
+> Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
 ### Script
 
 ### Result
 
-
 ## Soal-20
->Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
+
+> Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
 ### Script
 
