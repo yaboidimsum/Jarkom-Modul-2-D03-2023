@@ -295,9 +295,9 @@ Langkah-langkah implementasi tetap sama seperti yang telah dijelaskan pada Perta
 
 ### Script
 ```
-echo 'zone "arjuna.d03.com" {
+echo 'zone "abimanyu.d03.com" {
         type master;
-        file "/etc/bind/main/arjuna.d03.com";
+        file "/etc/bind/main/aabimanyu.d03.com";
 };' > /etc/bind/named.conf.local
 
 echo '
@@ -335,9 +335,9 @@ Untuk membuat subdomain pada domain abimanyu.yyy.com, diperlukan penambahan bari
 
 ### Script
 ```
-echo 'zone "arjuna.d03.com" {
+echo 'zone "abimanyu.d03.com" {
         type master;
-        file "/etc/bind/main/arjuna.d03.com";
+        file "/etc/bind/main/abimanyu.d03.com";
 };' > /etc/bind/named.conf.local
 
 echo '
