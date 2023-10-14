@@ -905,9 +905,107 @@ Tampilan Wisanggeni
 
 > Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh (Prabakusuma:8001, Abimanyu:8002, Wisanggeni:8003)
 
+Setelah berhasil melakukan deployment pada setiap worker, untuk menerapkan metode Round Robin dan menentukan port untuk setiap worker, kita hanya perlu mengubah beberapa konfigurasi pada load balancer Arjuna dan ketiga worker tersebut.
+
 ### Script
 
+"Untuk mengkonfigurasi load balancer Arjuna, kita dapat memodifikasinya sebagai berikut. Pada setiap baris server worker, tambahkan ':800X', dengan X mewakili angka dari 1 hingga 3, untuk membedakan port pada masing-masing worker.
+
+```shell
+echo '
+upstream worker {
+        server 10.23.3.2:8003;
+        server 10.23.3.3:8002;
+        server 10.23.3.4:8001;
+}
+
+server {
+    listen 80;
+
+    server_name arjuna.d03.com www.arjuna.d03.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+}' > /etc/nginx/sites-available/arjuna.d03.com
+
+ln -s /etc/nginx/sites-available/arjuna.d03.com /etc/nginx/sites-enabled
+
+service nginx restart
+```
+
+Adapun pada konfigurasi worker, terdapat tambahan keterangan terkait port yang digunakan. Dalam konfigurasi ini, perhatikan baris `listen 800X`, di mana X adalah angka yang disesuaikan dengan port masing-masing worker. Selain itu, tambahkan perintah 'echo' yang ketiga, yang akan menampilkan pesan tambahan terkait port yang digunakan oleh setiap worker.
+
+```shell
+service php7.2-fpm start
+
+echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wisanggeni</title>
+</head>
+<body>
+    Im [Nama Worker]
+</body>
+</html>
+' > /var/www/html/index.html
+
+echo '
+server {
+    listen 800X;
+    root /var/www/html/;
+    index index.html index.htm;  # Remove index.php from here
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;  # Adjust the try_files directive as needed
+    }
+
+    error_log /var/log/nginx/wisanggeni_error.log;
+    access_log /var/log/nginx/wisanggeni_access.log;
+}
+ ' > /etc/nginx/sites-available/wisanggeni.d03.com
+
+ ln -s /etc/nginx/sites-available/wisanggeni.d03.com /etc/nginx/sites-enabled
+ 
+ service nginx restart
+```
 ### Result
+
+Jalankan perintah berikut pada client untuk melakukan pengujian.
+
+```shell
+lynx http://10.23.3.4:8001
+lynx http://10.23.3.3:8002
+lynx http://10.23.3.2:8003
+lynx http://arjuna.d03.com
+```
+
+**Nakula**
+
+Tampilan Prabakusuma
+![Alt text](img/image-19.png)
+
+Tampilan Abimanyu
+![Alt text](img/image-20.png)
+
+Tampilan Wisanggeni
+![Alt text](img/image-21.png)
+
+**Sadewa**
+
+Tampilan Prabakusuma
+![Alt text](img/image-19.png)
+
+Tampilan Abimanyu
+![Alt text](img/image-20.png)
+
+Tampilan Wisanggeni
+![Alt text](img/image-21.png)
+
 
 ## Soal-11
 
