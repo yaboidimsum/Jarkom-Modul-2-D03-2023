@@ -425,9 +425,79 @@ host -t PTR 10.23.3.3
 ## Soal-6
 >Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
 
+Untuk melakukan konfigurasi DNS Slave, diperlukan beberapa pengaturan pada `DNS Master(Yudhistira)` dan `DNS Slave (Werkudara)`.
+
 ### Script
 
+Langkah awal adalah menambahkan konfigurasi 'notify', 'also-notify', dan 'allow-transfer' agar memberikan izin kepada IP yang dituju.
+
+**DNS Master (Yudhistira)**
+```
+echo 'zone "arjuna.d03.com" {
+        type master;
+        also-notify { 10.23.1.5; };
+        allow-transfer { 10.23.1.5; };
+        file "/etc/bind/main/arjuna.d03.com";
+};
+
+zone "abimanyu.d03.com" {
+        type master;
+        also-notify { 10.23.1.5; };
+        allow-transfer { 10.23.1.5; };
+        file "/etc/bind/main/abimanyu.d03.com";
+};
+
+zone "3.23.10.in-addr.arpa" {
+        type master;
+        file "/etc/bind/main/3.23.10.in-addr.arpa";
+};
+' > /etc/bind/named.conf.local
+
+service bind9 restart
+service bind9 stop
+```
+Service pada DNS Master dihentikan untuk memastikan konfigurasi telah berjalan dengan baik pada DNS Slave.
+
+**DNS Slave (Werkudara)**
+```
+echo 'zone "abimanyu.d03.com" {
+    type slave;
+    masters { 10.23.1.4; };
+    file "/var/lib/bind/abimanyu.d03.com";
+};
+
+zone "arjuna.d03.com" {
+    type slave;
+    masters { 10.23.1.4; };
+    file "/var/lib/bind/arjuna.d03.com";
+};' > /etc/bind/named.conf.local
+
+service bind9 restart
+```
+Jika sudah selesai, pengujian dapat dilakukan dengan melakukan ping pada domain yang telah dibuat, seperti Arjuna dan Abimanyu
+
+```
+ping arjuna.d03.com -c 5
+ping abimanyu.d03.com -c 5
+```
+
 ### Result
+
+Stop Bind9 **Yudhistira**
+
+![Alt text](image-13.png)
+
+Start Bind9 **Werkudara**
+
+![Alt text](image-14.png)
+
+**Nakula**
+
+![Alt text](image-11.png)
+
+**Sadewa**
+
+![Alt text](image-12.png)
 
 
 ## Soal-7
