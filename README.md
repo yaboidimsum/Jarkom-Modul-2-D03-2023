@@ -378,10 +378,49 @@ Lalu lakuan ping pada client untuk memastikan subdomain telah berjalan dengan ba
 ## Soal-5
 >Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
+Untuk melakukan konfigurasi reverse domain, kami perlu mengetahui IP dari Abimanyu. IP Abimanyu dalam kelompok kami adalah 10.23.3.3, oleh karena itu, kami perlu mengubahnya menjadi 3.3.23.10.
+
 ### Script
+```
+echo 'zone "3.23.10.in-addr.arpa" {
+        type master;
+        file "/etc/bind/main/3.23.10.in-addr.arpa";
+};
+' > /etc/bind/named.conf.local
+
+echo '
+;
+; BIND data file for local loopback interface
+;
+$TTL  604800
+@   IN      SOA     abimanyu.d03.com.  root.abimanyu.d03.com. (
+                    2023100902      ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry 
+                        2419200     ; Expire
+                        604800  )   ; Negative Cache TTL
+;
+3.23.10.in-addr.arpa.    IN  NS     abimanyu.d03.com.
+3                        IN  PTR    abimanyu.d03.com.
+' > /etc/bind/main/3.23.10.in-addr.arpa
+```
+
+Lakukan command berikut pada client untuk memastikan reverse domain telah berjalan dengan baik.
+
+```
+host -t PTR 10.23.3.3
+```
+
 
 ### Result
 
+**Nakula**
+
+![Alt text](image-9.png)
+
+**Sadewa**
+
+![Alt text](image-10.png)
 
 ## Soal-6
 >Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
