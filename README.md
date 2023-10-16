@@ -77,7 +77,7 @@ Perkenalkan kami dari kelas `Jaringan Komputer D Kelompok D03`, dengan anggota s
 
 ### Topology
 
-![Alt text](image.png)
+![Alt text](img/image.png)
 
 ### Config
 
