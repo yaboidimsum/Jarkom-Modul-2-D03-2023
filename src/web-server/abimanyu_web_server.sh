@@ -146,5 +146,14 @@ echo -e '<VirtualHost *:14000 *:14400>
 
 a2ensite rjp.baratayuda.abimanyu.d03.com.conf
 
+echo -e '<VirtualHost *:80>
+    ServerAdmin webmaster@abimanyu.d03.com
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Redirect / http://www.abimanyu.d03.com/
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 service apache2 restart

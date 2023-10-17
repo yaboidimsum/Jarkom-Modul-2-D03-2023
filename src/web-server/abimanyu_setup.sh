@@ -13,7 +13,7 @@ rm /etc/apache2/sites-enabled/*
 rm /etc/apache2/sites-available/*
 
 
-wget -O '/var/www/abimanyu.d03.com' 'https://     drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc'
+wget -O '/var/www/abimanyu.d03.com' 'https://drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc'
 unzip -o /var/www/abimanyu.d03.com -d /var/www/
 mv /var/www/abimanyu.yyy.com /var/www/abimanyu.d03
 rm /var/www/abimanyu.d03.com

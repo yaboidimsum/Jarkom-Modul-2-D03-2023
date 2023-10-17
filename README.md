@@ -1011,73 +1011,393 @@ Tampilan Wisanggeni
 
 > Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
+Pastikan kita melakukan [Prerequisite](#prerequisite) terlebih dahulu. Kemudian, mengatur configurasi pada `Yudhistira` mengubah IP yang awalnya ke `Werkudara` menuju `Abimanyu`, selain itu menggunakan `ServerAlias` agar bisa menggunakan `www` nantinya.
 ### Script
+**Yudhistira (DNS Master)**
+```shell
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.d03.com. root.abimanyu.d03.com. (
+                        2023101001      ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      abimanyu.d03.com.
+@       IN      A       10.23.3.3     ; IP Abimanyu
+www     IN      CNAME   abimanyu.d03.com.
+parikesit IN    A       10.23.3.3     ; IP Abimanyu
+ns1     IN      A       10.23.2.2     ; IP Werkudara
+baratayuda IN   NS      ns1' > /etc/bind/main/abimanyu.d03.com
 
+service bind9 restart
+```
+
+**Abimanyu (Worker)**
+```shell
+cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/abimanyu.d03.com.conf
+
+rm /etc/apache2/sites-available/000-default.conf
+
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/abimanyu.d03
+
+  ServerName abimanyu.d03.com
+  ServerAlias www.abimanyu.d03.com
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/abimanyu.d03.com.conf
+
+a2ensite abimanyu.d03.com.conf
+
+service apache2 restart
+```
+**Nakula (Client)**
+```shell
+lynx abimanyu.d03.com
+```
 ### Result
+![image-12-1](img/image-11-1.png)
 
 ## Soal-12
 
 > Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
-### Script
+Disini kita menggunakana bantuan `Directory` yang melakukan rewrite Indexes agar dapat melakukan `Alias`
 
+### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/abimanyu.d03
+  ServerName abimanyu.d03.com
+  ServerAlias www.abimanyu.d03.com
+
+  <Directory /var/www/abimanyu.d03/index.php/home>
+          Options +Indexes
+  </Directory>
+
+  Alias "/home" "/var/www/abimanyu.d03/index.php/home"
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/abimanyu.d03.com.conf
+
+service apache2 restart
+```
+**Nakula (Client)**
+```shell
+lynx abimanyu.d03.com/home
+curl abimanyu.d03.com/home
+```
 ### Result
+![image-11-1](img/image-11-1.png)
+
 
 ## Soal-13
 
 > Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
 
+Untuk menyelesaikan soal tersebut, kita hanya memerlukan setup `ServerName` dan `ServerAlias`.
 ### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.d03
+  ServerName parikesit.abimanyu.d03.com
+  ServerAlias www.parikesit.abimanyu.d03.com
 
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.d03.com.conf
+
+a2ensite parikesit.abimanyu.d03.com.conf
+
+service apache2 restart
+```
+**Nakula (Client)**
+```shell
+lynx parikesit.abimanyu.d03.com
+curl parikesit.abimanyu.d03.com
+```
 ### Result
+![image-13-1](img/image-13-1.png)
 
 ## Soal-14
 
 > Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
+Agar dapat mengizinkan `public` melakukan directory listing kida dapat menggunakan `Options +Indexes`. Sedangkan agar suatu folder tidak dapat di akses, kita dapat menggunakan `Option -Indexes`.
+
 ### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.d03
+  ServerName parikesit.abimanyu.d03.com
+  ServerAlias www.parikesit.abimanyu.d03.com
+
+  <Directory /var/www/parikesit.abimanyu.d03/public>
+          Options +Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.d03/secret>
+          Options -Indexes
+  </Directory>
+
+  Alias "/public" "/var/www/parikesit.abimanyu.d03/public"
+  Alias "/secret" "/var/www/parikesit.abimanyu.d03/secret"
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.d03.com.conf
+
+service apache2 restart
+```
+
+**Nakula (Client)**
+```shell
+lynx parikesit.abimanyu.d03.com/public
+lynx parikesit.abimanyu.d03.com/secret
+```
 
 ### Result
+**/public**
+![image-14-1](img/image-14-1.png)
+![image-14-2](img/image-14-2.png)
+
+**/scret**
+![image-14-3](img/image-14-3.png)
+![image-14-4](img/image-14-4.png)
+
 
 ## Soal-15
 
 > Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
+Untuk halaman `eror` html, kita memperolehnya dari file sumber daya yang telah disediakan. Rinciannya dapat ditemukan di folder `parikesit.abimanyu.d03.com/public/error/`. Di dalamnya, ada dua file, yaitu `403.html` dan `404.html`. Kita juga menggunakan `ErrorDocument`, yang berfungsi untuk mengarahkan ulang ke file yang diinginkan saat menemui masalah saat mengakses domain yang sudah ada sebelumnya.
+
 ### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.d03
+  ServerName parikesit.abimanyu.d03.com
+  ServerAlias www.parikesit.abimanyu.d03.com
 
+  <Directory /var/www/parikesit.abimanyu.d03/public>
+          Options +Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.d03/secret>
+          Options -Indexes
+  </Directory>
+
+  Alias "/public" "/var/www/parikesit.abimanyu.d03/public"
+  Alias "/secret" "/var/www/parikesit.abimanyu.d03/secret"
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.d03.com.conf
+
+service apache2 restart
+```
+**Nakula (Client)**
+```shell
+lynx parikesit.abimanyu.d03.com/erortest
+lynx parikesit.abimanyu.d03.com/secret
+```
 ### Result
+**Eror**
+![iamge-15-1](img/image-15-1.png)
+![image-15-2](img/image-15-2.png)
 
+**Forbidden**
+![image-15-3](img/image-15-3.png)
+![image-15-4](img/image-15-4.png)
 ## Soal-16
 
 > Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi www.parikesit.abimanyu.yyy.com/js
 
+Aagar file asset www.parikesit.abimanyu.d03.com/public/js menjadi www.parikesit.abimanyu.d03.com/js. Kita hanya perlu menambahkan `Alias "/js" "/var/www/parikesit.abimanyu.d03/public/js"`. Jangan lupa menambahkan `ServerName` dan `ServerAlias` agar virtual host dapat berjalan.
 ### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.d03
+  ServerName parikesit.abimanyu.d03.com
+  ServerAlias www.parikesit.abimanyu.d03.com
+
+  <Directory /var/www/parikesit.abimanyu.d03/public>
+          Options +Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.d03/secret>
+          Options -Indexes
+  </Directory>
+
+  Alias "/public" "/var/www/parikesit.abimanyu.d03/public"
+  Alias "/secret" "/var/www/parikesit.abimanyu.d03/secret"
+  Alias "/js" "/var/www/parikesit.abimanyu.d03/public/js"
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.d03.com.conf
+```
+
+**Nakula (Client)**
+```shell
+lynx parikesit.abimanyu.d03.com/js
+```
 
 ### Result
-
+![image-16-1](img/image-16-1.png)
+![image-16-2](img/image-16-2.png)
 ## Soal-17
 
 > Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
+Agar dapat melakukan di akses melalui port tertentu. Kita hanya perlu melakukan konfigurasi ulang dengan `ports.conf` dengan menambahkan Listen `14000` dan Listen `14400`. Kita juga perlu mengubah` <VirtualHost *:14000 *:14400>`
+
 ### Script
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:14000 *:14400>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/rjp.baratayuda.abimanyu.d03
+  ServerName rjp.baratayuda.abimanyu.d03.com
+  ServerAlias www.rjp.baratayuda.abimanyu.d03.com
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda.abimanyu.d03.com.conf
+
+echo -e '# If you just change the port or add more ports here, you will likely also
+# have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default.conf
+
+Listen 80
+Listen 14000
+Listen 14400
+
+<IfModule ssl_module>
+        Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+        Listen 443
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet' > /etc/apache2/ports.conf
+
+a2ensite rjp.baratayuda.abimanyu.d03.com.conf
+
+service apache2 restart
+```
+
+**Nakula (Client)**
+```shell
+lynx rjp.baratayuda.abimanyu.d03.com:14000
+lynx rjp.baratayuda.abimanyu.d03.com:14400
+```
 
 ### Result
-
+![image-17-1](img/image-17-1.png)
+Jika port tidak sesuai, maka akan memberikan tampilan sebagai berikut:
+![image-17-2](img/image-17-2.png)
 ## Soal-18
 
 > Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
 ### Script
 
-### Result
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:14000 *:14400>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/rjp.baratayuda.abimanyu.d03
+  ServerName rjp.baratayuda.abimanyu.d03.com
+  ServerAlias www.rjp.baratayuda.abimanyu.d03.com
 
+  <Directory /var/www/rjp.baratayuda.abimanyu.d03>
+          AuthType Basic
+          AuthName "Restricted Content"
+          AuthUserFile /etc/apache2/.htpasswd
+          Require valid-user
+  </Directory>
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda.abimanyu.d03.com.conf
+
+a2ensite rjp.baratayuda.abimanyu.d03.com.conf
+```
+Selanjutnya registrasi username dan password dengan menggunakan `htpasswd`. Password akan tersimpan sebagai hash supaya lebih aman, `-c` adalah `created` dan -`b` merupakan `bcrypt` .
+```shell
+htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudad03
+```
+**Nakula (Client)**
+```shell
+lynx rjp.baratayuda.abimanyu.d03.com:14000
+lynx rjp.baratayuda.abimanyu.d03.com:14400
+```
+### Result
+![image-18-1](img/image-18-1.png)
+![image-18-2](img/image-18-2.png)
+![image-18-3](img/image-18-3.png)
+![image-18-4](img/image-18-4.png)
+Jika username dan password anda tidak sesuai maka tampilan nya sebagai berikut:
+![image-18-5](img/image-18-5.png)
 ## Soal-19
 
 > Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
+Agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke `www.abimanyu.D03.com`. Dapat menggunakan file `Redirect` untuk di arahkan kapada file yg kita tentukan.
+
 ### Script
 
+**Abimanyu (Worker)**
+```shell
+echo -e '<VirtualHost *:80>
+    ServerAdmin webmaster@abimanyu.d03.com
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Redirect / http://www.abimanyu.d03.com/
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+```
+
+**Nakula (Client)**
+```shell
+lynx 10.23.3.3
+```
+
 ### Result
+![image-19-1](img/image-11-1.png)
 
 ## Soal-20
 
@@ -1085,4 +1405,57 @@ Tampilan Wisanggeni
 
 ### Script
 
+**Abimanyu (Worker)**
+Pada worker `Abimanyu` agar menjalankan sebuah perintah agar dapat `rewrite modul`
+```shell
+a2enmod rewrite
+``` 
+Kemudian, lakukan `rewrite` terhadap directory `parikesit.abimanyu.d03.com` dengan menjalankan perintah berikut
+```shell
+echo 'RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/public/images/(.*)(abimanyu)(.*\.(png|jpg))
+RewriteCond %{REQUEST_URI} !/public/images/abimanyu.png
+RewriteRule abimanyu http://parikesit.abimanyu.d03.com/public/images/abimanyu.png$1 [L,R=301]' > /var/www/parikesit.abimanyu.d03/.htaccess
+```
+Terakhir atur kembali konfigurasi pada file `parikesit.abimanyu.d03.com.conf` dengan menggunakan `AllowOverride All` untuk mengkonfigurasi nya dengan `.htaccess`.
+```shell
+echo -e '<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.d03
+
+  ServerName parikesit.abimanyu.d03.com
+  ServerAlias www.parikesit.abimanyu.d03.com
+
+  <Directory /var/www/parikesit.abimanyu.d03/public>
+          Options +Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.d03/secret>
+          Options -Indexes
+  </Directory>
+
+  <Directory /var/www/parikesit.abimanyu.d03>
+          Options +FollowSymLinks -Multiviews
+          AllowOverride All
+  </Directory>
+
+  Alias "/public" "/var/www/parikesit.abimanyu.d03/public"
+  Alias "/secret" "/var/www/parikesit.abimanyu.d03/secret"
+  Alias "/js" "/var/www/parikesit.abimanyu.d03/public/js"
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.d03.com.conf
+```
+
+**Nakula (Client)**
+```shell
+lynx parikesit.abimanyu.d03.com/public/images/abimanyu.png
+```
+
 ### Result
+![image-20-1](img/image-20-1.png)
+![image-20-1](img/image-20-2.png)
