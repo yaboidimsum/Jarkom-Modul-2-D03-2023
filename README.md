@@ -1174,7 +1174,7 @@ lynx parikesit.abimanyu.d03.com/secret
 ![image-14-1](img/image-14-1.png)
 ![image-14-2](img/image-14-2.png)
 
-**/scret**
+**/secret**
 ![image-14-3](img/image-14-3.png)
 ![image-14-4](img/image-14-4.png)
 
